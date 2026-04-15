@@ -50,6 +50,32 @@
       letter-spacing: 0.01em;
     }
 
+    .screenshot-mode #dominanceText {
+      display: none;
+    }
+
+    .screenshot-mode #debugBox {
+      padding: 0.875rem;
+    }
+
+    .screenshot-mode #debugBox p {
+      margin-bottom: 0.35rem;
+    }
+
+    .screenshot-mode #detailLines {
+      margin-top: 0.5rem;
+      gap: 0.35rem;
+    }
+
+    .screenshot-mode #detailLines > div {
+      gap: 0.5rem;
+      line-height: 1.25;
+    }
+
+    .screenshot-mode #nilaiGabunganValue {
+      margin-top: 0.25rem;
+    }
+
     @media print {
       .no-print {
         display: none !important;
@@ -116,11 +142,11 @@
             <div class="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1">
               <label class="cursor-pointer">
                 <input class="peer sr-only" type="radio" name="type" value="2026" checked>
-                <span class="block rounded-xl px-3 py-3 text-center text-sm font-semibold text-slate-600 transition peer-checked:bg-white peer-checked:text-ink peer-checked:shadow">Lulusan 2026</span>
+                <span class="block rounded-xl px-3 py-3 text-center text-sm font-semibold text-slate-700 transition peer-checked:bg-white peer-checked:text-ink peer-checked:shadow">Lulusan 2026</span>
               </label>
               <label class="cursor-pointer">
                 <input class="peer sr-only" type="radio" name="type" value="2025">
-                <span class="block rounded-xl px-3 py-3 text-center text-sm font-semibold text-slate-600 transition peer-checked:bg-white peer-checked:text-ink peer-checked:shadow"><= 2025</span>
+                <span class="block rounded-xl px-3 py-3 text-center text-sm font-semibold text-slate-700 transition peer-checked:bg-white peer-checked:text-ink peer-checked:shadow"><= 2025</span>
               </label>
             </div>
           </div>
@@ -129,19 +155,19 @@
             <p class="text-sm font-semibold text-slate-700">Nilai TKA/D 2026</p>
             <div class="grid gap-3">
               <label class="block">
-                <span class="mb-1 block text-sm text-slate-600">Matematika (TKA) :</span>
+                <span class="mb-1 block text-sm text-slate-700">Matematika (TKA) :</span>
                 <input data-field="tka_mtk" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
               </label>
               <label class="block">
-                <span class="mb-1 block text-sm text-slate-600">Bahasa Indonesia (TKA) :</span>
+                <span class="mb-1 block text-sm text-slate-700">Bahasa Indonesia (TKA) :</span>
                 <input data-field="tka_indo" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
               </label>
               <label class="block">
-                <span class="mb-1 block text-sm text-slate-600">IPA (TKAD) :</span>
+                <span class="mb-1 block text-sm text-slate-700">IPA (TKAD) :</span>
                 <input data-field="tkad_ipa" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
               </label>
               <label class="block">
-                <span class="mb-1 block text-sm text-slate-600">Bahasa Inggris (TKAD) :</span>
+                <span class="mb-1 block text-sm text-slate-700">Bahasa Inggris (TKAD) :</span>
                 <input data-field="tkad_eng" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
               </label>
             </div>
@@ -151,15 +177,15 @@
             <p class="text-sm font-semibold text-slate-700">Nilai ASPD</p>
             <div class="grid gap-3">
               <label class="block">
-                <span class="mb-1 block text-sm text-slate-600">Literasi Membaca (Rerata B. Indonesia + B.Inggris)</span>
+                <span class="mb-1 block text-sm text-slate-700">Literasi Membaca (Rerata B. Indonesia + B.Inggris)</span>
                 <input data-field="aspd_read" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
               </label>
               <label class="block">
-                <span class="mb-1 block text-sm text-slate-600">Literasi Sains</span>
+                <span class="mb-1 block text-sm text-slate-700">Literasi Sains</span>
                 <input data-field="aspd_sci" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
               </label>
               <label class="block">
-                <span class="mb-1 block text-sm text-slate-600">Literasi Numerik</span>
+                <span class="mb-1 block text-sm text-slate-700">Literasi Numerik</span>
                 <input data-field="aspd_num" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
               </label>
             </div>
@@ -170,12 +196,12 @@
               <div class="flex items-center justify-between gap-3">
                 <div>
                   <p class="text-sm font-semibold text-slate-700">Nilai Rapor</p>
-                  <p class="text-xs text-slate-500">Hitung rerata per mapel dari Semester 1 sampai 5, lalu menjumlahkannya menjadi R.</p>
+                  <p class="text-xs leading-5 text-slate-600">Hitung rerata per mapel dari Semester 1 sampai 5, lalu menjumlahkannya menjadi R.</p>
                 </div>
-                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">4 Mapel X 5 Semester</span>
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">4 Mapel X 5 Semester</span>
               </div>
               <div class="mt-3 overflow-hidden rounded-2xl border border-slate-200">
-                <div class="grid grid-cols-5 bg-slate-100 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                <div class="grid grid-cols-5 bg-slate-100 text-[11px] font-semibold uppercase tracking-wide text-slate-700">
                   <div class="px-2 py-2 text-center">Sm1</div>
                   <div class="px-2 py-2 text-center">Sm2</div>
                   <div class="px-2 py-2 text-center">Sm3</div>
@@ -186,7 +212,7 @@
               </div>
             </div>
             <label class="block">
-              <span class="mb-1 block text-sm text-slate-600">Poin prestasi (kalau punya)</span>
+              <span class="mb-1 block text-sm text-slate-700">Poin prestasi (kalau punya)</span>
               <input data-field="prestasi" class="number-input w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right outline-none transition focus:border-accent focus:bg-white" type="number" min="0" step="0.01" placeholder="0">
             </label>
           </div>
@@ -205,7 +231,7 @@
         <div class="bg-[linear-gradient(180deg,_rgba(18,140,126,0.10),_rgba(255,255,255,0.92))] px-5 pb-3 pt-5">
           <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-pine/80">NG Hasil Simulasi</p>
           <div class="rounded-[24px] bg-white p-5 text-center">
-            <p class="text-sm text-slate-500">Nilai Gabungan</p>
+            <p class="text-sm text-slate-600">Nilai Gabungan</p>
             <p id="nilaiGabunganValue" class="mt-2 font-display text-5xl font-bold tracking-tight text-ink sm:text-6xl">0.00</p>
             <p id="dominanceText" class="mt-3 text-sm text-pine">Tekan tombol HITUNG NG dahulu.</p>
           </div>
@@ -219,15 +245,15 @@
             </div>
             <div class="space-y-2 text-sm">
               <div class="flex items-center justify-between">
-                <span id="tesLabel" class="text-slate-600">TKA/D (60%)</span>
+                <span id="tesLabel" class="text-slate-700">TKA/D (60%)</span>
                 <strong id="tesValue">0.00</strong>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-slate-600">Rapor (40%)</span>
+                <span class="text-slate-700">Rapor (40%)</span>
                 <strong id="raporValue">0.00</strong>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-slate-600">Prestasi</span>
+                <span class="text-slate-700">Prestasi</span>
                 <strong id="prestasiValue">0.00</strong>
               </div>
               <div class="border-t border-dashed border-slate-200 pt-2">
@@ -239,7 +265,7 @@
             </div>
           </div>
 
-          <div id="debugBox" class="rounded-[22px] border border-slate-200 bg-white p-4 text-sm leading-7 text-slate-600">
+          <div id="debugBox" class="rounded-[22px] border border-slate-200 bg-white p-4 text-sm leading-7 text-slate-700">
             <p class="font-semibold text-ink">Rincian Perhitungan</p>
             <div id="detailLines" class="mt-3 space-y-2"></div>
           </div>
@@ -271,7 +297,7 @@
           <button id="copyLink" type="button" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700">Copy Link</button>
           <button id="copySummary" type="button" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700">Copy Ringkasan</button>
         </div>
-        <p id="shareHint" class="mt-3 text-sm text-slate-500">Tip: aktifkan mode screenshot untuk tampilan yang lebih bersih saat dibagikan.</p>
+        <p id="shareHint" class="mt-3 text-sm leading-6 text-slate-600">Tip: aktifkan mode screenshot untuk tampilan yang lebih bersih saat dibagikan.</p>
       </section>
 
       <section id="faq" class="rounded-[28px] border border-[#d9d9d9] bg-[#fdfdfd] p-5 shadow-card" data-screenshot-hide>
@@ -869,6 +895,7 @@
 
     function toggleScreenshotMode() {
       APP_STATE.screenshotMode = !APP_STATE.screenshotMode;
+      elements.body.classList.toggle("screenshot-mode", APP_STATE.screenshotMode);
       document.querySelectorAll("[data-screenshot-hide]").forEach((node) => {
         node.classList.toggle("hidden", APP_STATE.screenshotMode);
       });
