@@ -105,7 +105,7 @@
           <div class="rounded-[24px] bg-white/85 p-5 text-center">
             <p class="text-sm text-slate-500">Nilai Gabungan</p>
             <p id="nilaiGabunganValue" class="mt-2 font-display text-5xl font-bold tracking-tight text-ink sm:text-6xl">0.00</p>
-            <p id="dominanceText" class="mt-3 text-sm text-pine">Kontribusi terbesar saat ini berasal dari Tes Akademik.</p>
+            <p id="dominanceText" class="mt-3 text-sm text-pine">Kontribusi terbesar pada nilai akhir saat ini berasal dari Tes Akademik.</p>
           </div>
         </div>
 
@@ -303,10 +303,19 @@
     const FORM_KEYS = [...TES_KEYS_2026, ...ASPD_KEYS_2025, ...RAPOR_KEYS, "prestasi"];
 
     const APP_STATE = {
-      manualClickCount: 0,
       screenshotMode: false,
-      popunderThreshold: 75
+      maxScore: 1000
     };
+
+    const INTERACTION_STATE = {
+      touchedFields: new Set(),
+      editCounts: {},
+      prevValues: {},
+      hasTriggered: sessionStorage.getItem("popunder_shown") === "1"
+    };
+
+    let ALL_INPUTS = [];
+    let debounceTimer = null;
 
     const FIELD_LABELS = {
       tka_mtk: "Matematika (TKA)",
@@ -373,6 +382,10 @@
       `).join("");
     }
 
+    function refreshInputCache() {
+      ALL_INPUTS = Array.from(document.querySelectorAll("[data-field]"));
+    }
+
     function toNumber(value) {
       const parsed = Number(value);
       return Number.isFinite(parsed) ? parsed : 0;
@@ -404,10 +417,14 @@
 
     function collectInput() {
       const data = { type: getCurrentType() };
-      elements.form.querySelectorAll("[data-field]").forEach((input) => {
+      ALL_INPUTS.forEach((input) => {
         data[input.dataset.field] = input.value;
       });
       return data;
+    }
+
+    function isEmpty(value) {
+      return value === "" || value === null || value === undefined;
     }
 
     function normalizeInput(input = {}) {
@@ -436,25 +453,45 @@
       }
     }
 
-    function validateScores(rawData) {
+    function validateScores(rawData, normalizedData) {
       const errors = [];
 
       getActiveFields(rawData.type).forEach((key) => {
-        if (toNumber(rawData[key]) < 0) {
+        const rawValue = rawData[key];
+        const numericValue = normalizedData[key];
+
+        if (isEmpty(rawValue)) {
+          errors.push(`${FIELD_LABELS[key]} belum diisi.`);
+          return;
+        }
+
+        if (numericValue < 0) {
           errors.push(`${FIELD_LABELS[key]} tidak boleh negatif.`);
+          return;
+        }
+
+        if (numericValue > APP_STATE.maxScore) {
+          errors.push(`${FIELD_LABELS[key]} terlalu besar.`);
         }
       });
 
       return errors;
     }
 
-    function calculateRapor(normalizedInput) {
+    function calculateRapor(normalizedInput, rawInput = {}) {
       const subjectAverages = {};
       let raporFinal = 0;
 
       RAPOR_SUBJECTS.forEach((subject) => {
-        const values = RAPOR_SEMESTERS.map((semester) => normalizedInput[`rapor_${subject.key}_s${semester}`]);
-        const average = values.reduce((sum, value) => sum + value, 0) / RAPOR_SEMESTERS.length;
+        const values = RAPOR_SEMESTERS
+          .map((semester) => {
+            const key = `rapor_${subject.key}_s${semester}`;
+            return isEmpty(rawInput[key]) ? null : normalizedInput[key];
+          })
+          .filter((value) => value !== null);
+        const average = values.length
+          ? values.reduce((sum, value) => sum + value, 0) / values.length
+          : 0;
         subjectAverages[subject.key] = round(average);
         raporFinal += average;
       });
@@ -465,8 +502,9 @@
       };
     }
 
-    function calculateNilaiGabungan(input) {
-      const normalized = normalizeInput(input);
+    function calculateNilaiGabungan(input, options = {}) {
+      const normalized = options.normalized ? input : normalizeInput(input);
+      const rawInput = options.rawInput || input;
       const {
         type,
         tka_mtk,
@@ -481,7 +519,7 @@
 
       validateType(type);
 
-      const raporResult = calculateRapor(normalized);
+      const raporResult = calculateRapor(normalized, rawInput);
       const weightedRapor = 0.4 * raporResult.raporFinal;
       let nilaiTes = 0;
       let breakdown = {};
@@ -546,18 +584,18 @@
       elements.totalValue.textContent = formatNumber(result.nilaiGabungan);
       elements.nilaiGabunganValue.textContent = formatNumber(result.nilaiGabungan);
       elements.dominanceText.textContent = tesDominant
-        ? `Kontribusi terbesar saat ini berasal dari ${tesLabel}.`
-        : "Kontribusi terbesar saat ini berasal dari Rapor.";
+        ? `Kontribusi terbesar pada nilai akhir saat ini berasal dari ${tesLabel}.`
+        : "Kontribusi terbesar pada nilai akhir saat ini berasal dari Rapor.";
 
       const lines = [];
       if (type === "2026") {
         lines.push(["Mode hitung", result.detail.mode]);
-        lines.push(["Total nilai tes", formatNumber(result.detail.totalTes)]);
-        lines.push(["Komponen tes terboboti", formatNumber(result.detail.weightedTes)]);
+        lines.push(["Total Tes Akademik", formatNumber(result.detail.totalTes)]);
+        lines.push(["Komponen Tes Akademik", formatNumber(result.detail.weightedTes)]);
       } else {
         lines.push(["Mode hitung", result.detail.mode]);
-        lines.push(["ASPD setelah koefisien", formatNumber(result.detail.aspdTransformed)]);
-        lines.push(["Komponen ASPD terboboti", formatNumber(result.detail.weightedTes)]);
+        lines.push(["Total ASPD Terkonversi", formatNumber(result.detail.aspdTransformed)]);
+        lines.push(["Komponen ASPD", formatNumber(result.detail.weightedTes)]);
       }
 
       lines.push(["Total rerata rapor (R)", formatNumber(result.detail.raporRaw)]);
@@ -574,6 +612,10 @@
           <strong class="text-right text-ink">${value}</strong>
         </div>
       `).join("");
+    }
+
+    function hasStartedActiveInput(rawData) {
+      return getActiveFields(rawData.type).some((key) => !isEmpty(rawData[key]));
     }
 
     function updateVisibility(type) {
@@ -607,40 +649,55 @@
         params.set(key, String(toNumber(rawData[key] ?? 0)));
       });
 
-      const nextUrl = `${window.location.pathname}?${params.toString()}`;
-      window.history.replaceState({}, "", nextUrl);
+      const url = new URL(window.location.href);
+      url.search = params.toString();
+      window.history.replaceState({}, "", url);
     }
 
-    function maybeTriggerPopunder(result) {
-      if (APP_STATE.manualClickCount !== 2) {
-        return;
-      }
-
-      if (sessionStorage.getItem("popunder_shown")) {
-        return;
-      }
-
-      if (result.nilaiGabungan >= APP_STATE.popunderThreshold) {
+    function triggerPopunder() {
+      if (INTERACTION_STATE.hasTriggered) {
         return;
       }
 
       const popup = window.open("https://shopee.co.id/", "_blank", "noopener,noreferrer");
       if (popup) {
+        INTERACTION_STATE.hasTriggered = true;
         sessionStorage.setItem("popunder_shown", "1");
       }
     }
 
-    function calculateAndRender() {
+    function checkPopTrigger() {
+      if (INTERACTION_STATE.hasTriggered) {
+        return;
+      }
+
+      const activeFields = getActiveFields(getCurrentType());
+      const touchedCount = activeFields.filter((key) => INTERACTION_STATE.touchedFields.has(key)).length;
+      const totalEdits = activeFields.reduce((sum, key) => sum + (INTERACTION_STATE.editCounts[key] || 0), 0);
+      const coverageOK = touchedCount >= activeFields.length;
+      const editOK = totalEdits >= activeFields.length * 1.5;
+
+      if (coverageOK && editOK) {
+        triggerPopunder();
+      }
+    }
+
+    function calculateAndRender(options = {}) {
       try {
         const rawData = collectInput();
-        const errors = validateScores(rawData);
-        showError(errors);
+        const normalizedData = normalizeInput(rawData);
+        const errors = validateScores(rawData, normalizedData);
+        const shouldShowErrors = options.forceErrors || hasStartedActiveInput(rawData);
+        showError(shouldShowErrors ? errors : []);
 
         if (errors.length) {
           return null;
         }
 
-        const result = calculateNilaiGabungan(rawData);
+        const result = calculateNilaiGabungan(normalizedData, {
+          normalized: true,
+          rawInput: rawData
+        });
         renderBreakdown(rawData.type, result);
         syncQueryString(rawData);
 
@@ -730,12 +787,37 @@
       });
     }
 
+    function bindInteractionTracking() {
+      ALL_INPUTS.forEach((input) => {
+        input.addEventListener("change", () => {
+          const key = input.dataset.field;
+          const activeFields = getActiveFields(getCurrentType());
+
+          if (!activeFields.includes(key) || input.value === "") {
+            return;
+          }
+
+          INTERACTION_STATE.touchedFields.add(key);
+
+          if (INTERACTION_STATE.prevValues[key] !== input.value) {
+            INTERACTION_STATE.editCounts[key] = (INTERACTION_STATE.editCounts[key] || 0) + 1;
+            INTERACTION_STATE.prevValues[key] = input.value;
+          }
+
+          checkPopTrigger();
+        });
+      });
+    }
+
     elements.menuButton.addEventListener("click", openMenu);
     elements.closeMenuButton.addEventListener("click", closeMenu);
     elements.menuOverlay.addEventListener("click", closeMenu);
 
     elements.form.addEventListener("input", () => {
-      calculateAndRender();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        calculateAndRender();
+      }, 250);
     });
 
     elements.form.addEventListener("change", (event) => {
@@ -746,18 +828,14 @@
     });
 
     elements.calculateButton.addEventListener("click", () => {
-      APP_STATE.manualClickCount += 1;
-      const computed = calculateAndRender();
-      if (computed) {
-        maybeTriggerPopunder(computed.result);
-      }
+      calculateAndRender({ forceErrors: true });
     });
 
     elements.screenshotButton.addEventListener("click", toggleScreenshotMode);
     elements.screenshotExitButton.addEventListener("click", toggleScreenshotMode);
 
     elements.whatsappShare.addEventListener("click", () => {
-      const computed = calculateAndRender();
+      const computed = calculateAndRender({ forceErrors: true });
       if (!computed) {
         return;
       }
@@ -768,7 +846,7 @@
     });
 
     elements.copyLink.addEventListener("click", () => {
-      const computed = calculateAndRender();
+      const computed = calculateAndRender({ forceErrors: true });
       if (!computed) {
         return;
       }
@@ -777,7 +855,7 @@
     });
 
     elements.copySummary.addEventListener("click", () => {
-      const computed = calculateAndRender();
+      const computed = calculateAndRender({ forceErrors: true });
       if (!computed) {
         return;
       }
@@ -786,8 +864,10 @@
     });
 
     renderRaporGrid();
+    refreshInputCache();
     applyQueryValues();
     bindAutoAdvance();
+    bindInteractionTracking();
     updateVisibility(getCurrentType());
     calculateAndRender();
   </script>
