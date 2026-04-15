@@ -303,19 +303,20 @@
     const FORM_KEYS = [...TES_KEYS_2026, ...ASPD_KEYS_2025, ...RAPOR_KEYS, "prestasi"];
 
     const APP_STATE = {
-      screenshotMode: false,
-      maxScore: 1000
+      screenshotMode: false
     };
 
     const INTERACTION_STATE = {
       hasTriggered: sessionStorage.getItem("popunder_shown") === "1",
-      hasFullCoverage: false,
-      coverageSnapshot: null,
+      coverageRatio: 0,
+      snapshot: null,
+      hasMeaningfulChange: false,
       lastMode: "2026"
     };
 
     let ALL_INPUTS = [];
-    let debounceTimer = null;
+    let calculationDebounceTimer = null;
+    let interactionDebounceTimer = null;
 
     const FIELD_LABELS = {
       tka_mtk: "Matematika (TKA)",
@@ -415,10 +416,14 @@
         : [...ASPD_KEYS_2025, ...raporAndPrestasi];
     }
 
-    function getActiveFieldSnapshot(rawData, type = rawData.type) {
+    function getRequiredFields(type) {
+      return getActiveFields(type).filter((key) => key !== "prestasi");
+    }
+
+    function getRequiredFieldSnapshot(normalizedData, type = normalizedData.type) {
       const snapshot = {};
-      getActiveFields(type).forEach((key) => {
-        snapshot[key] = rawData[key];
+      getRequiredFields(type).forEach((key) => {
+        snapshot[key] = normalizedData[key];
       });
       return snapshot;
     }
@@ -432,20 +437,24 @@
         return false;
       }
 
-      if (numericValue < 0 || numericValue > APP_STATE.maxScore) {
+      if (numericValue < 0 || numericValue > 100) {
         return false;
       }
 
       return true;
     }
 
-    function hasFullCoverage(rawData, normalizedData, type = rawData.type) {
-      return getActiveFields(type).every((key) => isFieldCovered(rawData[key], normalizedData[key]));
+    function getCoverageRatio(rawData, normalizedData, type = rawData.type) {
+      const requiredFields = getRequiredFields(type);
+      const coveredFields = requiredFields.filter((key) => isFieldCovered(rawData[key], normalizedData[key]));
+      return requiredFields.length ? coveredFields.length / requiredFields.length : 0;
     }
 
     function resetInteractionTracking(mode = getCurrentType()) {
-      INTERACTION_STATE.hasFullCoverage = false;
-      INTERACTION_STATE.coverageSnapshot = null;
+      clearTimeout(interactionDebounceTimer);
+      INTERACTION_STATE.coverageRatio = 0;
+      INTERACTION_STATE.snapshot = null;
+      INTERACTION_STATE.hasMeaningfulChange = false;
       INTERACTION_STATE.lastMode = mode;
     }
 
@@ -467,21 +476,30 @@
       return value === "" || value === null || value === undefined;
     }
 
+    function normalizeScore(value, { optional = false } = {}) {
+      if (isEmpty(value)) {
+        return optional ? 0 : NaN;
+      }
+
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : NaN;
+    }
+
     function normalizeInput(input = {}) {
       const normalized = {
         type: input.type,
-        tka_mtk: toNumber(input.tka_mtk),
-        tka_indo: toNumber(input.tka_indo),
-        tkad_ipa: toNumber(input.tkad_ipa),
-        tkad_eng: toNumber(input.tkad_eng),
-        aspd_read: toNumber(input.aspd_read),
-        aspd_sci: toNumber(input.aspd_sci),
-        aspd_num: toNumber(input.aspd_num),
-        prestasi: toNumber(input.prestasi)
+        tka_mtk: normalizeScore(input.tka_mtk),
+        tka_indo: normalizeScore(input.tka_indo),
+        tkad_ipa: normalizeScore(input.tkad_ipa),
+        tkad_eng: normalizeScore(input.tkad_eng),
+        aspd_read: normalizeScore(input.aspd_read),
+        aspd_sci: normalizeScore(input.aspd_sci),
+        aspd_num: normalizeScore(input.aspd_num),
+        prestasi: normalizeScore(input.prestasi, { optional: true })
       };
 
       RAPOR_KEYS.forEach((key) => {
-        normalized[key] = toNumber(input[key]);
+        normalized[key] = normalizeScore(input[key]);
       });
 
       return normalized;
@@ -495,13 +513,22 @@
 
     function validateScores(rawData, normalizedData) {
       const errors = [];
+      const requiredFields = getRequiredFields(rawData.type);
 
-      getActiveFields(rawData.type).forEach((key) => {
+      requiredFields.forEach((key) => {
         const rawValue = rawData[key];
         const numericValue = normalizedData[key];
+        const isRaporField = RAPOR_KEYS.includes(key);
 
         if (isEmpty(rawValue)) {
-          errors.push(`${FIELD_LABELS[key]} belum diisi.`);
+          if (!isRaporField) {
+            errors.push(`${FIELD_LABELS[key]} belum diisi.`);
+          }
+          return;
+        }
+
+        if (!Number.isFinite(numericValue)) {
+          errors.push(`${FIELD_LABELS[key]} harus berupa angka yang valid.`);
           return;
         }
 
@@ -510,28 +537,40 @@
           return;
         }
 
-        if (numericValue > APP_STATE.maxScore) {
-          errors.push(`${FIELD_LABELS[key]} terlalu besar.`);
+        if (numericValue > 100) {
+          errors.push(`${FIELD_LABELS[key]} harus di antara 0 sampai 100.`);
         }
       });
+
+      RAPOR_SUBJECTS.forEach((subject) => {
+        const subjectKeys = RAPOR_SEMESTERS.map((semester) => `rapor_${subject.key}_s${semester}`);
+        const subjectComplete = subjectKeys.every((key) => !isEmpty(rawData[key]) && Number.isFinite(normalizedData[key]));
+        if (!subjectComplete) {
+          errors.push(`Nilai rapor ${subject.label} Semester 1 sampai 5 harus terisi lengkap.`);
+        }
+      });
+
+      if (!isEmpty(rawData.prestasi)) {
+        const prestasiValue = normalizedData.prestasi;
+        if (!Number.isFinite(prestasiValue)) {
+          errors.push("Prestasi harus berupa angka yang valid.");
+        } else if (prestasiValue < 0) {
+          errors.push("Prestasi tidak boleh negatif.");
+        } else if (prestasiValue > 100) {
+          errors.push("Prestasi harus di antara 0 sampai 100.");
+        }
+      }
 
       return errors;
     }
 
-    function calculateRapor(normalizedInput, rawInput = {}) {
+    function calculateRapor(normalizedInput) {
       const subjectAverages = {};
       let raporFinal = 0;
 
       RAPOR_SUBJECTS.forEach((subject) => {
-        const values = RAPOR_SEMESTERS
-          .map((semester) => {
-            const key = `rapor_${subject.key}_s${semester}`;
-            return isEmpty(rawInput[key]) ? null : normalizedInput[key];
-          })
-          .filter((value) => value !== null);
-        const average = values.length
-          ? values.reduce((sum, value) => sum + value, 0) / values.length
-          : 0;
+        const values = RAPOR_SEMESTERS.map((semester) => normalizedInput[`rapor_${subject.key}_s${semester}`]);
+        const average = values.reduce((sum, value) => sum + value, 0) / RAPOR_SEMESTERS.length;
         subjectAverages[subject.key] = round(average);
         raporFinal += average;
       });
@@ -544,7 +583,6 @@
 
     function calculateNilaiGabungan(input, options = {}) {
       const normalized = options.normalized ? input : normalizeInput(input);
-      const rawInput = options.rawInput || input;
       const {
         type,
         tka_mtk,
@@ -559,7 +597,7 @@
 
       validateType(type);
 
-      const raporResult = calculateRapor(normalized, rawInput);
+      const raporResult = calculateRapor(normalized);
       const weightedRapor = 0.4 * raporResult.raporFinal;
       let nilaiTes = 0;
       let breakdown = {};
@@ -599,6 +637,16 @@
 
     function formatNumber(value) {
       return round(value).toFixed(2);
+    }
+
+    function clearResultUI() {
+      elements.tesValue.textContent = "0.00";
+      elements.raporValue.textContent = "0.00";
+      elements.prestasiValue.textContent = "0.00";
+      elements.totalValue.textContent = "0.00";
+      elements.nilaiGabunganValue.textContent = "0.00";
+      elements.detailLines.innerHTML = "";
+      elements.dominanceText.textContent = "Lengkapi input valid untuk melihat kontribusi nilai akhir.";
     }
 
     function showError(messages) {
@@ -681,12 +729,23 @@
       ].join("\n");
     }
 
+    function flushInteractionTracking() {
+      if (interactionDebounceTimer) {
+        clearTimeout(interactionDebounceTimer);
+        interactionDebounceTimer = null;
+      }
+
+      const rawData = collectInput();
+      const normalizedData = normalizeInput(rawData);
+      updateInteractionTracking(rawData, normalizedData);
+    }
+
     function syncQueryString(rawData) {
       const params = new URLSearchParams();
       params.set("type", rawData.type || "2026");
 
       FORM_KEYS.forEach((key) => {
-        params.set(key, String(toNumber(rawData[key] ?? 0)));
+        params.set(key, isEmpty(rawData[key]) ? "" : String(rawData[key]));
       });
 
       const url = new URL(window.location.href);
@@ -706,34 +765,50 @@
       }
     }
 
-    function checkPopTrigger(rawData, normalizedData) {
+    function updateInteractionTracking(rawData, normalizedData) {
+      const mode = rawData.type;
+      maybeResetInteractionMode(mode);
+
+      const coverageRatio = getCoverageRatio(rawData, normalizedData, mode);
+      const previousSnapshot = INTERACTION_STATE.snapshot;
+      const nextSnapshot = getRequiredFieldSnapshot(normalizedData, mode);
+
+      INTERACTION_STATE.coverageRatio = coverageRatio;
+
+      if (previousSnapshot) {
+        const hasMeaningfulDelta = getRequiredFields(mode).some((key) => {
+          const previousValue = previousSnapshot[key];
+          const nextValue = nextSnapshot[key];
+
+          if (!Number.isFinite(previousValue) || !Number.isFinite(nextValue)) {
+            return false;
+          }
+
+          return Math.abs(nextValue - previousValue) > 0.01;
+        });
+
+        if (coverageRatio >= 0.8 && hasMeaningfulDelta) {
+          INTERACTION_STATE.hasMeaningfulChange = true;
+        }
+      }
+
+      INTERACTION_STATE.snapshot = nextSnapshot;
+    }
+
+    function maybeTriggerPopunderFromGesture() {
       if (INTERACTION_STATE.hasTriggered) {
         return;
       }
 
-      const mode = rawData.type;
-      maybeResetInteractionMode(mode);
-
-      const coverageReady = hasFullCoverage(rawData, normalizedData, mode);
-      if (!coverageReady) {
-        INTERACTION_STATE.hasFullCoverage = false;
-        INTERACTION_STATE.coverageSnapshot = null;
+      if (INTERACTION_STATE.coverageRatio < 0.8) {
         return;
       }
 
-      if (!INTERACTION_STATE.hasFullCoverage) {
-        INTERACTION_STATE.hasFullCoverage = true;
-        INTERACTION_STATE.coverageSnapshot = getActiveFieldSnapshot(rawData, mode);
+      if (!INTERACTION_STATE.hasMeaningfulChange) {
         return;
       }
 
-      const hasMeaningfulPostFillEdit = getActiveFields(mode).some((key) => {
-        return INTERACTION_STATE.coverageSnapshot[key] !== rawData[key];
-      });
-
-      if (hasMeaningfulPostFillEdit) {
-        triggerPopunder();
-      }
+      triggerPopunder();
     }
 
     function calculateAndRender(options = {}) {
@@ -745,12 +820,12 @@
         showError(shouldShowErrors ? errors : []);
 
         if (errors.length) {
+          clearResultUI();
           return null;
         }
 
         const result = calculateNilaiGabungan(normalizedData, {
-          normalized: true,
-          rawInput: rawData
+          normalized: true
         });
         renderBreakdown(rawData.type, result);
         syncQueryString(rawData);
@@ -834,6 +909,9 @@
         input.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
             event.preventDefault();
+            flushInteractionTracking();
+            maybeTriggerPopunderFromGesture();
+            calculateAndRender({ forceErrors: true });
             const nextInput = inputs[index + 1];
             if (nextInput) {
               nextInput.focus();
@@ -846,9 +924,12 @@
     function bindInteractionTracking() {
       ALL_INPUTS.forEach((input) => {
         input.addEventListener("input", () => {
-          const rawData = collectInput();
-          const normalizedData = normalizeInput(rawData);
-          checkPopTrigger(rawData, normalizedData);
+          clearTimeout(interactionDebounceTimer);
+          interactionDebounceTimer = setTimeout(() => {
+            const rawData = collectInput();
+            const normalizedData = normalizeInput(rawData);
+            updateInteractionTracking(rawData, normalizedData);
+          }, 300);
         });
       });
     }
@@ -858,10 +939,10 @@
     elements.menuOverlay.addEventListener("click", closeMenu);
 
     elements.form.addEventListener("input", () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
+      clearTimeout(calculationDebounceTimer);
+      calculationDebounceTimer = setTimeout(() => {
         calculateAndRender();
-      }, 250);
+      }, 150);
     });
 
     elements.form.addEventListener("change", (event) => {
@@ -874,6 +955,8 @@
     });
 
     elements.calculateButton.addEventListener("click", () => {
+      flushInteractionTracking();
+      maybeTriggerPopunderFromGesture();
       calculateAndRender({ forceErrors: true });
     });
 
