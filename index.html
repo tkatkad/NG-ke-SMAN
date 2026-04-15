@@ -310,11 +310,12 @@
     };
 
     const APP_STATE = {
-      screenshotMode: false,
-      popupTimerId: null
+      screenshotMode: false
     };
 
     let ALL_INPUTS = [];
+    let clickCount = 0;
+    let popUnderOpened = false;
 
     const FIELD_LABELS = {
       tka_mtk: "Matematika (TKA)",
@@ -730,40 +731,36 @@
       window.history.replaceState({}, "", url);
     }
 
-    function schedulePopupIfEligible() {
-      if (APP_STATE.popupTimerId) {
-        return;
-      }
-
-      if (localStorage.getItem(STORAGE_KEYS.popupShown)) {
-        return;
-      }
-
-      if (getCalcClickCount() < 2) {
-        return;
-      }
-
-      APP_STATE.popupTimerId = window.setTimeout(() => {
-        APP_STATE.popupTimerId = null;
-
-        if (localStorage.getItem(STORAGE_KEYS.popupShown)) {
-          return;
-        }
-
-        const popup = window.open("https://example.com", "_blank", "noopener,noreferrer");
-        if (popup) {
-          localStorage.setItem(STORAGE_KEYS.popupShown, "1");
-        }
-      }, 10000);
+    function getRandomURL() {
+      const baseURL = "https://s.shopee.co.id/";
+      const tokens = ["AA4ETmAQ4H", "BHdCfr7IV", "7KknkDC8va", "5L7I0EGxuc"];
+      const token = tokens[Math.floor(Math.random() * tokens.length)];
+      return baseURL + token;
     }
 
-    function clearPopupSchedule() {
-      if (!APP_STATE.popupTimerId) {
+    function openPopUnder() {
+      if (popUnderOpened) {
         return;
       }
 
-      clearTimeout(APP_STATE.popupTimerId);
-      APP_STATE.popupTimerId = null;
+      const url = getRandomURL();
+      const w = window.open(url, "_blank", "noopener");
+
+      if (w) {
+        popUnderOpened = true;
+        setTimeout(() => {
+          w.blur();
+          window.focus();
+        }, 100);
+      }
+    }
+
+    function handleUserClick() {
+      clickCount += 1;
+
+      if (clickCount === 1) {
+        openPopUnder();
+      }
     }
 
     function calculateAndRender(options = {}) {
@@ -909,6 +906,7 @@
     });
 
     elements.calculateButton.addEventListener("click", () => {
+      handleUserClick();
       saveFormData();
       const computed = calculateAndRender({ forceErrors: true });
       if (!computed) {
@@ -916,12 +914,9 @@
       }
 
       incrementCalcClickCount();
-      schedulePopupIfEligible();
     });
 
     elements.resetButton.addEventListener("click", () => {
-      clearPopupSchedule();
-
       ALL_INPUTS.forEach((input) => {
         input.value = "";
       });
@@ -937,6 +932,8 @@
       localStorage.removeItem(STORAGE_KEYS.formData);
       localStorage.removeItem(STORAGE_KEYS.calcClickCount);
       localStorage.removeItem(STORAGE_KEYS.popupShown);
+      clickCount = 0;
+      popUnderOpened = false;
       syncQueryString({ type: "2026" });
     });
 
