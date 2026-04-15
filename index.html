@@ -14,17 +14,17 @@
       theme: {
         extend: {
           colors: {
-            ink: "#18212f",
-            accent: "#d96b2b",
-            mist: "#eef5f4",
-            pine: "#19463f"
+            ink: "#111b21",
+            accent: "#25d366",
+            mist: "#e7f7ef",
+            pine: "#128c7e"
           },
           boxShadow: {
-            card: "0 18px 60px rgba(24, 33, 47, 0.12)"
+            card: "0 10px 30px rgba(17, 27, 33, 0.08)"
           },
           fontFamily: {
-            display: ["Georgia", "Cambria", "serif"],
-            body: ["Trebuchet MS", "Verdana", "sans-serif"]
+            display: ["Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"],
+            body: ["Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"]
           }
         }
       }
@@ -45,6 +45,11 @@
       -moz-appearance: textfield;
     }
 
+    body {
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+    }
+
     @media print {
       .no-print {
         display: none !important;
@@ -61,8 +66,8 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-[radial-gradient(circle_at_top,_#fff5e8_0%,_#eef5f4_45%,_#f7fafc_100%)] text-ink font-body">
-  <div id="app" class="mx-auto min-h-screen max-w-md px-4 pb-28 pt-4 sm:max-w-xl sm:px-6">
+<body class="min-h-screen bg-[#efeae2] text-ink font-body antialiased">
+  <div id="app" class="mx-auto min-h-screen max-w-md px-3 pb-28 pt-3 sm:max-w-xl sm:px-5">
     <header class="no-print mb-4 flex items-center justify-between" data-screenshot-hide>
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.28em] text-pine/70">SPMB SMAN/SMKN DIY 2026/2027</p>
@@ -99,10 +104,10 @@
     </aside>
 
     <main class="space-y-4">
-      <section id="calculator" class="no-print rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-card backdrop-blur" data-screenshot-hide>
+      <section id="calculator" class="no-print rounded-[28px] border border-[#d9d9d9] bg-[#fdfdfd] p-5 shadow-card" data-screenshot-hide>
         <div class="mb-4">
-          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-pine/70">Input Nilai</p>
-          <h2 class="font-display text-2xl font-bold">Ubah nilai untuk lihat peluangmu</h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-pine/80">Input Nilai</p>
+          <h2 class="font-display text-[1.65rem] font-semibold">Isi data untuk simulasi Nilai Gabungan</h2>
         </div>
 
         <form id="calculatorForm" class="space-y-4" novalidate>
@@ -188,20 +193,18 @@
 
           <div id="errorBox" class="hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
 
-          <div class="grid gap-2 sm:grid-cols-3">
-            <button id="calculateButton" type="button" class="rounded-2xl bg-ink px-4 py-3 font-semibold text-white transition hover:opacity-95">Hitung NG</button>
-            <button id="screenshotButton" type="button" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-50">Mode Screenshot</button>
-            <button id="resetButton" type="button" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-700 transition hover:bg-red-100">Reset</button>
+          <div class="grid gap-2">
+            <button id="calculateButton" type="button" class="rounded-2xl bg-[#128c7e] px-4 py-3.5 text-[15px] font-semibold text-white transition hover:opacity-95">Hitung NG</button>
           </div>
         </form>
       </section>
 
 
 
-      <section class="print-card overflow-hidden rounded-[28px] border border-white/70 bg-white/85 shadow-card backdrop-blur">
-        <div class="bg-[linear-gradient(135deg,_rgba(217,107,43,0.18),_rgba(25,70,63,0.08))] px-5 pb-3 pt-5">
-          <p class="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-pine/70">NG Hasil Simulasi</p>
-          <div class="rounded-[24px] bg-white/85 p-5 text-center">
+      <section class="print-card overflow-hidden rounded-[28px] border border-[#d9d9d9] bg-[#fdfdfd] shadow-card">
+        <div class="bg-[linear-gradient(180deg,_rgba(18,140,126,0.10),_rgba(255,255,255,0.92))] px-5 pb-3 pt-5">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-pine/80">NG Hasil Simulasi</p>
+          <div class="rounded-[24px] bg-white p-5 text-center">
             <p class="text-sm text-slate-500">Nilai Gabungan</p>
             <p id="nilaiGabunganValue" class="mt-2 font-display text-5xl font-bold tracking-tight text-ink sm:text-6xl">0.00</p>
             <p id="dominanceText" class="mt-3 text-sm text-pine">Tekan tombol HITUNG NG dahulu.</p>
@@ -209,7 +212,7 @@
         </div>
 
         <div class="space-y-3 px-5 pb-5">
-          <div class="rounded-[22px] bg-slate-50 p-4">
+          <div class="rounded-[22px] bg-[#f6f7f8] p-4">
             <div class="mb-3 flex items-center justify-between">
               <h2 class="font-semibold text-ink">Dirinci</h2>
               <span id="modeBadge" class="rounded-full bg-mist px-3 py-1 text-xs font-semibold text-pine">Mode 2026</span>
@@ -236,25 +239,29 @@
             </div>
           </div>
 
-          <div id="debugBox" class="rounded-[22px] border border-slate-200 p-4 text-sm text-slate-600">
+          <div id="debugBox" class="rounded-[22px] border border-slate-200 bg-white p-4 text-sm leading-7 text-slate-600">
             <p class="font-semibold text-ink">Rincian Perhitungan</p>
             <div id="detailLines" class="mt-3 space-y-2"></div>
           </div>
         </div>
       </section>
 
-      <section class="no-print rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-card backdrop-blur" data-screenshot-hide>
-        <form id="calculatorForm2" class="space-y-4" novalidate>
-          <div class="grid gap-2 sm:grid-cols-3">
-            <button id="screenshotButton" type="button" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-50">Mode Screenshot</button>
-            <button id="resetButton" type="button" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-700 transition hover:bg-red-100">Bersihkan Data</button>
+      <section class="no-print rounded-[28px] border border-[#d9d9d9] bg-[#fdfdfd] p-5 shadow-card" data-screenshot-hide>
+        <div class="space-y-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-pine/80">Aksi Tambahan</p>
+            <h2 class="mt-1 font-display text-xl font-semibold text-ink">Screenshot dan reset data</h2>
           </div>
-        </form>
+          <div class="grid gap-2 sm:grid-cols-3">
+            <button id="screenshotButton" type="button" class="rounded-2xl border border-[#d9d9d9] bg-white px-4 py-3 text-[15px] font-semibold text-slate-700 transition hover:bg-slate-50">Mode Screenshot</button>
+            <button id="resetButton" type="button" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[15px] font-semibold text-red-700 transition hover:bg-red-100">Bersihkan Data</button>
+          </div>
+        </div>
       </section>
 
 
 
-      <section class="no-print rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-card backdrop-blur" data-screenshot-hide>
+      <section class="no-print rounded-[28px] border border-[#d9d9d9] bg-[#fdfdfd] p-5 shadow-card" data-screenshot-hide>
         <div class="mb-3">
           <p class="text-xs font-semibold uppercase tracking-[0.24em] text-pine/70">Share</p>
           <h2 class="font-display text-2xl font-bold">Bagikan hasil simulasi ini</h2>
@@ -267,7 +274,7 @@
         <p id="shareHint" class="mt-3 text-sm text-slate-500">Tip: aktifkan mode screenshot untuk tampilan yang lebih bersih saat dibagikan.</p>
       </section>
 
-      <section id="faq" class="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-card backdrop-blur" data-screenshot-hide>
+      <section id="faq" class="rounded-[28px] border border-[#d9d9d9] bg-[#fdfdfd] p-5 shadow-card" data-screenshot-hide>
         <h2 class="font-display text-2xl font-bold">FAQ Singkat</h2>
         <div class="mt-3 space-y-3 text-sm text-slate-600">
           <div>
@@ -285,7 +292,7 @@
         </div>
       </section>
 
-      <section id="tentang" class="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-card backdrop-blur">
+      <section id="tentang" class="rounded-[28px] border border-[#d9d9d9] bg-[#fdfdfd] p-5 shadow-card">
         <h2 class="font-display text-2xl font-bold">Website apa ini?</h2>
         <p class="mt-3 text-sm leading-6 text-slate-600">Link website <a href="https://tkatkad.github.io/ng/">https://tkatkad.github.io/ng/</a> adalah sebuah Kalkulator Simulator berbasis rumus resmi Nilai Gabungan SPMB SMAN/SMKN DIY 2026/2027.
         </p>
@@ -665,7 +672,7 @@
       elements.totalValue.textContent = "0.00";
       elements.nilaiGabunganValue.textContent = "0.00";
       elements.detailLines.innerHTML = "";
-      elements.dominanceText.textContent = "Lengkapi input valid untuk melihat kontribusi nilai akhir.";
+      elements.dominanceText.textContent = "Lengkapi input nilai yang valid untuk melihat kontribusi nilai akhir.";
     }
 
     function showError(messages) {
