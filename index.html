@@ -738,21 +738,21 @@ nilaiTes = 0.6 * totalASPD;
       const lines = [];
       if (type === "2026") {
         lines.push(["Mode hitung", result.detail.mode]);
-        lines.push(["Jumlah Tes Akademik", formatNumber(result.detail.totalTes)]);
-        lines.push(["Komponen Tes Akademik", formatNumber(result.detail.weightedTes)]);
+        lines.push(["Jumlah TKA/D", formatNumber(result.detail.totalTes)]);
+        lines.push(["Komponen TKA/D (60%)", formatNumber(result.detail.weightedTes)]);
       } else {
         lines.push(["Mode hitung", result.detail.mode]);
         lines.push(["Total Nilai ASPD Terkonversi", formatNumber(result.detail.aspdTransformed)]);
-        lines.push(["Komponen ASPD", formatNumber(result.detail.weightedTes)]);
+        lines.push(["Komponen ASPD (60%)", formatNumber(result.detail.weightedTes)]);
       }
 
       lines.push(["Jumlah rerata 4 mapel rapor (R)", formatNumber(result.detail.raporRaw)]);
-      lines.push(["Komponen rapor", formatNumber(result.detail.rapor)]);
+      lines.push(["Komponen Rapor (40%)", formatNumber(result.detail.rapor)]);
       lines.push(["Rerata B. Indonesia", formatNumber(result.detail.subjectAverages.indo)]);
       lines.push(["Rerata Matematika", formatNumber(result.detail.subjectAverages.mtk)]);
       lines.push(["Rerata B. Inggris", formatNumber(result.detail.subjectAverages.eng)]);
       lines.push(["Rerata IPA", formatNumber(result.detail.subjectAverages.ipa)]);
-      lines.push(["Poin prestasi", formatNumber(result.detail.prestasi)]);
+      lines.push(["Tambahan Poin Prestasi", formatNumber(result.detail.prestasi)]);
 
       elements.detailLines.innerHTML = lines.map(([label, value]) => `
         <div class="flex items-center justify-between gap-4">
