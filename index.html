@@ -368,6 +368,7 @@
     const appState = {
       screenshotMode: false,
       currentType: "2026",
+	  isManualCalculating: false,
       formData: {},
       lastCalculation: null,
       validationErrors: [],
@@ -1035,11 +1036,11 @@ const tesWeighted = this.round(CONFIG.WEIGHT_TES * tesRawTotal);
       /**
        * Main calculation handler
        */
-	   let isManualCalculating = false;
+
 	   
       handleCalculate: function({ forceErrors = false } = {}) {
 	  
-	    isManualCalculating = true;
+	    appState.isManualCalculating = true;
         // Collect and validate
         const rawData = this.collectFormData();
         const validation = Validator.validateFormData(rawData);
@@ -1072,7 +1073,7 @@ const tesWeighted = this.round(CONFIG.WEIGHT_TES * tesRawTotal);
         
         // Handle popup (if enabled)
         PopupManager.handleUserClick();
-		 setTimeout(() => isManualCalculating = false, 300);
+		 setTimeout(() => appState.isManualCalculating = false, 300);
         
         return { rawData, result };
       },
@@ -1085,7 +1086,7 @@ const tesWeighted = this.round(CONFIG.WEIGHT_TES * tesRawTotal);
         const rawData = App.collectFormData();
         const validation = Validator.validateFormData(rawData);
 		
-		if (isManualCalculating) return;
+		if (appState.isManualCalculating) return;
         
         if (validation.valid) {
           const result = Calculator.compute(validation.normalizedData);
