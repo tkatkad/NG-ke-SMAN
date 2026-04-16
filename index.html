@@ -90,9 +90,22 @@
         <a href="#app" class="block rounded-2xl bg-mist px-4 py-3 font-semibold text-pine">Beranda</a>
         <a href="#calculator" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Simulasi Nilai</a>
         <a href="#recommendations" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Rekomendasi Sekolah</a>
-        <button type="button" class="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-3 text-left text-slate-500">Passing Grade (coming soon)</button>
+
         <a href="#faq" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">FAQ</a>
         <a href="#tentang" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Tentang</a>
+		
+		<a href="https://tkatkad.github.io/ng/Juknis%20Penerimaan%20Murid%20Baru%20Jenjang%20SMA%20SMK%20dan%20SLB%20TA%202026-2027.pdf" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">FAQ</a>
+		
+		<a href="https://tkatkad.github.io/ng/timeline-sman.jpeg" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Timeline</a>
+		<a href="https://tkatkad.github.io/ng/Cakupan%20Materi%20TKAD%20Tahun%202026%20(1).pdf" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Materi TKAD 2026</a>
+        <button type="button" class="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-3 text-left text-slate-500">Passing Grade 2025:</button>		
+		<a href="https://tkatkad.github.io/ng/passing-grade-terendah-jalur-domisili-wilayah-SMAN-2026.jpeg" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Domwil SMAN</a>
+		
+		<a href="https://tkatkad.github.io/ng/passing-grade-terendah-jalur-domisili-wilayah-dan-jalur-cadangan-SMKN-2026.jpeg" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Domwil SMKN</a>
+		
+		<a href="https://tkatkad.github.io/ng/passing-grade-terendah-jalur-prestasi-SMAN-2026.jpeg" class="block rounded-2xl border border-slate-200 px-4 py-3 text-slate-700">Japres SMAN</a>
+		
+
       </nav>
     </aside>
 
@@ -554,10 +567,10 @@
       
       // Popup/ads configuration
       POPUP: {
-        ENABLED: false,  // ⚠️ Default false untuk pengalaman user yang lebih baik
+        ENABLED: true,  // ⚠️ Default false untuk pengalaman user yang lebih baik
         TRIGGER_CLICK_COUNT: 2,
         BASE_URL: "https://s.shopee.co.id/",
-        TOKENS: ["AA4ETmAQ4H", "BHdCfr7IV", "7KknkDC8va", "5L7I0EGxuc"]
+        TOKENS: ["6L0YJ9fl3Z", "9Ke9srjdHP", "20rZ9TW0fj", "AKWh4vitvZ", "6pwoucArK0", "8KlchVytti"]
       },
       
       // UI/UX
@@ -1051,7 +1064,7 @@ const SchoolRecommender = {
       return `
         <div class="mb-6 last:mb-0">
           <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700">
-            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs">${label}</span>
+            <span class="rounded-full bg-slate-100 px-2.5 py-10 text-lg">${label}</span>
           </h3>
           <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center text-sm text-slate-500">
             Belum ada sekolah di kategori ini yang sesuai dengan nilai Anda.
@@ -1067,7 +1080,7 @@ const SchoolRecommender = {
     return `
       <div class="mb-6 last:mb-0">
         <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700">
-          <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs">${label}</span>
+          <span class="rounded-full bg-slate-100 px-2.5 py-10 text-xl">${label}</span>
           <span class="text-xs font-normal text-slate-500">(${schools.length} sekolah)</span>
         </h3>
         ${this.renderGroupedSchools(grouped, categoryKey)}
