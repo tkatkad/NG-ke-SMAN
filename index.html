@@ -53,7 +53,7 @@
     .zone-CUKUP-AMAN { background: #f7fee7; color: #65a30d; border: 1px solid #d9f99d; }
     .zone-AMAN { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .zone-SANGAT-AMAN { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
-    .zone-OVERKILL { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+    .zone-PASTI { background: #dfffd6; color: #64748b; border: 1px solid #e2e8f0; }
     .zone-TIDAK-LOLOS { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
   </style>
 </head>
@@ -128,7 +128,7 @@
               </label>
               <label class="cursor-pointer">
                 <input class="peer sr-only" type="radio" name="type" value="2025">
-                <span class="block rounded-xl px-3 py-3 text-center text-sm font-semibold text-slate-700 transition peer-checked:bg-white peer-checked:text-ink peer-checked:shadow">Lulusan 2025/sebelumnya</span>
+                <span class="block rounded-xl px-3 py-3 text-center text-sm font-semibold text-slate-700 transition peer-checked:bg-white peer-checked:text-ink peer-checked:shadow">Lulusan 2025 / sebelumnya</span>
               </label>
             </div>
           </div>
@@ -272,7 +272,7 @@
         <div id="recommendationsContent" class="px-5 pb-5 pt-3">
           <div class="text-center py-8 text-slate-500 text-sm">
             <p>Hitung Nilai Gabungan terlebih dahulu untuk melihat rekomendasi sekolah.</p>
-            <p class="mt-1 text-xs">💡 Semakin besar selisih nilai Anda dengan cutoff, semakin aman peluang diterima.</p>
+            <p class="mt-1 text-xs">💡 Semakin besar selisih nilai Anda dengan nilai minimum jalur tersebut tahun lalu, semakin aman peluang diterima.</p>
           </div>
         </div>
       </section>
@@ -307,11 +307,11 @@
             <button id="tiktokShare" type="button" class="rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition col-span-2 sm:col-span-1">TikTok / YouTube</button>
           </div>
           <div class="mt-2 grid grid-cols-2 gap-2">
-            <button id="copyLink" type="button" class="rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Copy Link</button>
-            <button id="copySummary" type="button" class="rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Copy Ringkasan</button>
+            <button id="copyLink" type="button" class="rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Copy Link NG</button>
+            <button id="copySummary" type="button" class="rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Copy Ringkasan NG</button>
           </div>
         </div>
-        <p id="shareHint" class="mt-3 text-sm leading-6 text-slate-600">Tip: aktifkan mode screenshot untuk tampilan yang lebih bersih saat dibagikan.</p>
+        <p id="shareHint" class="mt-3 text-sm leading-6 text-slate-600">Tip: manfaatkan mode screenshot untuk tampilan yang lebih bersih saat dibagikan.</p>
       </section>
 
       <!-- FAQ & About -->
@@ -328,18 +328,62 @@
           </div>
           <div>
             <p class="font-semibold text-ink">Apakah hasil ini hasil resmi?</p>
-            <p>Ini hanya simulasi mandiri. Verifikasi data tetap harus melalui laman resmi SPMB DIY.</p>
+            <p>Ini hanya simulasi NG mandiri. Verifikasi data tetap harus melalui laman resmi SPMB DIY.</p>
           </div>
           <div>
-            <p class="font-semibold text-ink">Bagaimana membaca rekomendasi sekolah?</p>
-            <p>Sekolah diurutkan dari yang paling "aman" (selisih nilai Anda dengan cutoff terbesar). Label zona menunjukkan tingkat keamanan: <span class="zone-badge zone-KRITIS">KRITIS</span> <span class="zone-badge zone-AMAN">AMAN</span> <span class="zone-badge zone-SANGAT-AMAN">SANGAT AMAN</span>.</p>
+            <p class="font-semibold text-ink">Bagaimana menafsirkan rekomendasi sekolah?</p>
+
+			
+
+
+<p>
+Sekolah diurutkan dari yang paling <strong>sulit ditembus</strong> ke yang paling mudah ditembus berdasarkan Nilai Gabungan (NG) Anda. 
+Semakin kecil selisih NG Anda dengan nilai minimum tahun 2025, semakin tinggi risiko tidak lolos.
+</p>
+
+<div class="flex flex-col gap-3 text-sm mt-2">
+
+  <div>
+    <p class="font-semibold text-red-600 mb-1">❌ Sebaiknya dihindari:</p>
+    <span class="zone-badge zone-TIDAK-LOLOS">TIDAK LOLOS</span>
+  </div>
+
+  <div>
+    <p class="font-semibold text-orange-600 mb-1">🎯 Pilihan 1 (target / berani):</p>
+    <span class="zone-badge zone-KRITIS">KRITIS</span>
+    <span class="zone-badge zone-RAWAN">RAWAN</span>
+    <span class="zone-badge zone-SANGAT-TIPIS">SANGAT TIPIS</span>
+  </div>
+
+  <div>
+    <p class="font-semibold text-yellow-600 mb-1">⚖️ Pilihan 2 (realistis):</p>
+    <span class="zone-badge zone-TIPIS">TIPIS</span>
+    <span class="zone-badge zone-CUKUP-AMAN">CUKUP AMAN</span>
+  </div>
+
+  <div>
+    <p class="font-semibold text-green-600 mb-1">🛡️ Pilihan 3 (aman / cadangan):</p>
+    <span class="zone-badge zone-AMAN">AMAN</span>
+    <span class="zone-badge zone-SANGAT-AMAN">SANGAT AMAN</span>
+    <span class="zone-badge zone-PASTI">PASTI</span>
+  </div>
+
+</div>
+
+<p class="mt-3 text-sm text-gray-600">
+Saran ini membantu menyusun strategi (Pilihan 1–3). Tidak harus diikuti sepenuhnya—tetap sesuaikan dengan minat anak dan karakter sekolah tujuan yang bukan hanya masalah akademis saja.
+</p>
+
+
+			<p class="font-semibold text-ink">Bagaimana membaca rekomendasi sekolah?</p>
+
           </div>
         </div>
       </section>
 
       <section id="tentang" class="rounded-[28px] border border-[#477458] bg-[#fdfdfd] p-5 shadow-card">
         <h2 class="font-display text-2xl font-bold">Website apa ini?</h2>
-        <p class="mt-3 text-sm leading-6 text-slate-600">Link website <a href="https://tkatkad.github.io/ng/" class="text-pine hover:underline">https://tkatkad.github.io/ng/</a> adalah sebuah Kalkulator Simulator berbasis rumus resmi Nilai Gabungan SPMB SMAN/SMKN DIY 2026/2027.</p>
+        <p class="mt-3 text-sm leading-6 text-slate-600">Link website <a href="https://tkatkad.github.io/ng/" class="text-pine hover:underline">https://tkatkad.github.io/ng/</a> adalah sebuah Kalkulator Simulator NG berbasis rumus resmi Nilai Gabungan SPMB SMAN/SMKN DIY 2026/2027.</p>
       </section>
     </main>
   </div>
@@ -351,8 +395,8 @@
   <script>
     /**
      * ============================================
-     * SCHOOL RECOMMENDATION DATA (Cutoff Values)
-     * Format: [cutoff_score, "School Name"]
+     * SCHOOL RECOMMENDATION DATA (nilai minimum jalur tersebut tahun lalu Values)
+     * Format: [nilai minimum jalur tersebut tahun lalu_score, "School Name"]
      * Data sample - bisa diperbarui sesuai sumber resmi
      * ============================================
      */
@@ -580,7 +624,7 @@
       // Recommendation settings
       RECOMMENDATION: {
         MAX_SCHOOLS_PER_CATEGORY: 10,
-        MIN_SELIHSH_FOR_DISPLAY: -5  // Tampilkan sekolah dengan selisih minimal -5 (sedikit di bawah cutoff)
+        MIN_SELIHSH_FOR_DISPLAY: -5  // Tampilkan sekolah dengan selisih minimal -5 (sedikit di bawah nilai minimum jalur tersebut tahun lalu)
       }
     };
 
@@ -866,7 +910,7 @@ const SchoolRecommender = {
    * 
    * Priority order: TIPIS(5) > CUKUP AMAN(4) > SANGAT TIPIS(4) > 
    *                 AMAN(3) > RAWAN(2) > SANGAT AMAN(2) > 
-   *                 KRITIS(1) > OVERKILL(1) > TIDAK LOLOS(-1)
+   *                 KRITIS(1) > PASTI(1) > TIDAK LOLOS(-1)
    */
   getZoneInfo: function(selisih) {
     if (selisih < 0) return { label: "TIDAK LOLOS", score: -1, color: "zone-TIDAK-LOLOS" };
@@ -877,16 +921,16 @@ const SchoolRecommender = {
     if (selisih < 10) return { label: "CUKUP AMAN", score: 4, color: "zone-CUKUP-AMAN" };
     if (selisih < 20) return { label: "AMAN", score: 3, color: "zone-AMAN" };
     if (selisih < 50) return { label: "SANGAT AMAN", score: 2, color: "zone-SANGAT-AMAN" };
-    return { label: "OVERKILL", score: 1, color: "zone-OVERKILL" };
+    return { label: "PASTI", score: 1, color: "zone-PASTI" };
   },
 
   /**
    * Core lookup: Filter → Map → Smart Sort → Group
    * 
    * Sorting priority (descending importance):
-   * 1. cutoff DESC (most competitive first)
+   * 1. nilai minimum jalur tersebut tahun lalu DESC (most competitive first)
    * 2. zone.score DESC (TIPIS/CUKUP AMAN prioritized)
-   * 3. selisih ASC (tighter margin preferred for same cutoff)
+   * 3. selisih ASC (tighter margin preferred for same nilai minimum jalur tersebut tahun lalu)
    */
   findMatchingSchools: function(schoolData, userScore, maxResults = CONFIG.RECOMMENDATION.MAX_SCHOOLS_PER_CATEGORY) {
     const minSelisih = CONFIG.RECOMMENDATION.MIN_SELIHSH_FOR_DISPLAY;
@@ -932,7 +976,7 @@ const SchoolRecommender = {
     const groups = {
       target: [],    // TIPIS, CUKUP AMAN (sweet spot)
       safe: [],      // AMAN, SANGAT AMAN (safe but less competitive)
-      easy: [],      // OVERKILL (too easy, low priority)
+      easy: [],      // PASTI (too easy, low priority)
       risky: []      // KRITIS, RAWAN (high risk)
     };
     
@@ -946,7 +990,7 @@ const SchoolRecommender = {
         case "SANGAT AMAN":
           groups.safe.push(school);
           break;
-        case "OVERKILL":
+        case "PASTI":
         case "SANGAT TIPIS":
           groups.easy.push(school);
           break;
@@ -995,7 +1039,7 @@ const SchoolRecommender = {
             <p class="truncate text-sm font-medium text-slate-800">${Utils.escapeHtml(school.nama)}</p>
           </div>
           <p class="mt-0.5 text-xs text-slate-500">
-            Cutoff: <strong class="text-slate-700">${Utils.formatDisplay(school.cutoff)}</strong>
+            Minim: <strong class="text-slate-700">${Utils.formatDisplay(school.cutoff)}</strong>
             <span class="mx-1 text-slate-300">•</span>
             Selisih: <strong class="${school.selisih >= 0 ? 'text-green-600' : 'text-red-600'}">${school.selisih >= 0 ? '+' : ''}${Utils.formatDisplay(school.selisih)}</strong>
           </p>
@@ -1074,7 +1118,7 @@ const SchoolRecommender = {
       `;
     }
 
-    // Find the actual TOP PICK: highest cutoff with zone in sweet spot
+    // Find the actual TOP PICK: highest nilai minimum jalur tersebut tahun lalu with zone in sweet spot
     const topPick = schools.find(s => s.zona === 'TIPIS' || s.zona === 'CUKUP AMAN') || schools[0];
 
     return `
@@ -1104,11 +1148,39 @@ const SchoolRecommender = {
           <p class="font-medium">Belum ada rekomendasi yang cocok.</p>
           <p class="mt-1">Coba periksa kembali input nilai atau tingkatkan skor simulasi Anda.</p>
           <div class="mt-4 inline-flex flex-wrap justify-center gap-2">
-            <span class="zone-badge zone-TIPIS">🎯 TIPIS</span>
-            <span class="zone-badge zone-CUKUP-AMAN">CUKUP AMAN</span>
-            <span class="zone-badge zone-AMAN">🟢 AMAN</span>
-          </div>
-          <p class="mt-3 text-xs text-slate-400">Prioritas: Pilih sekolah dengan zona TIPIS atau CUKUP AMAN</p>
+
+
+  <div>
+    <p class="font-semibold text-red-600 mb-1">❌ Sebaiknya dihindari:</p>
+    <span class="zone-badge zone-TIDAK-LOLOS">TIDAK LOLOS</span>
+  </div>
+
+  <div>
+    <p class="font-semibold text-orange-600 mb-1">🎯 Pilihan 1 (target / berani):</p>
+    <span class="zone-badge zone-KRITIS">KRITIS</span>
+    <span class="zone-badge zone-RAWAN">RAWAN</span>
+    <span class="zone-badge zone-SANGAT-TIPIS">SANGAT TIPIS</span>
+  </div>
+
+  <div>
+    <p class="font-semibold text-yellow-600 mb-1">⚖️ Pilihan 2 (realistis):</p>
+    <span class="zone-badge zone-TIPIS">TIPIS</span>
+    <span class="zone-badge zone-CUKUP-AMAN">CUKUP AMAN</span>
+  </div>
+
+  <div>
+    <p class="font-semibold text-green-600 mb-1">🛡️ Pilihan 3 (aman / cadangan):</p>
+    <span class="zone-badge zone-AMAN">AMAN</span>
+    <span class="zone-badge zone-SANGAT-AMAN">SANGAT AMAN</span>
+    <span class="zone-badge zone-PASTI">PASTI</span>
+  </div>
+
+</div>
+
+
+
+
+          <p class="mt-3 text-xs text-slate-400">Selain rekomendasi ini, anda juga harus melihat karakter sekolahnya seperti apa di bidang akademik dan non akademik, agar anak anda nyaman bersekolah.</p>
         </div>
       `;
       return;
@@ -1117,7 +1189,11 @@ const SchoolRecommender = {
     container.innerHTML = `
       <div class="mb-4 rounded-2xl bg-pine/5 border border-pine/20 p-3 text-xs text-pine">
         <p class="font-semibold">💡 Strategi Memilih:</p>
-        <p>Prioritaskan sekolah dengan zona <strong class="zone-badge zone-TIPIS">TIPIS</strong> atau <strong class="zone-badge zone-CUKUP-AMAN">CUKUP AMAN</strong> untuk peluang optimal.</p>
+
+		
+		<p class="mt-3 text-xs text-slate-400">Selain rekomendasi ini, harus melihat karakter sekolahnya seperti apa di bidang akademik dan non akademik, agar anak anda nyaman bersekolah.</p>
+		
+		
       </div>
       ${this.renderCategory('SMAN_japres', recommendations.SMAN_japres)}
       ${this.renderCategory('SMAN_jadomwil', recommendations.SMAN_jadomwil)}
@@ -1519,18 +1595,18 @@ const SchoolRecommender = {
         const url = window.location.href;
         
         if (platform === "copyLink") {
-          Utils.copyToClipboard(url, "Link simulasi berhasil disalin.");
+          Utils.copyToClipboard(url, "Link simulasi NG anda berhasil disalin.");
           return;
         }
         if (platform === "copySummary") {
-          Utils.copyToClipboard(text, "Ringkasan hasil berhasil disalin.");
+          Utils.copyToClipboard(text, "Ringkasan hasil NG anda berhasil disalin.");
           return;
         }
         const shareUrl = Utils.generateShareUrl(platform, text, url);
         if (shareUrl) {
           window.open(shareUrl, "_blank", "noopener,noreferrer");
         } else {
-          Utils.copyToClipboard(`${text}\n\n${url}`, "Link dan ringkasan disalin. Silakan paste manual.");
+          Utils.copyToClipboard(`${text}\n\n${url}`, "Link dan ringkasan NG telah disalin. Silakan paste manual.");
           DOM.shareHint.textContent = "Platform ini tidak mendukung share langsung. Konten telah disalin ke clipboard.";
         }
       }
