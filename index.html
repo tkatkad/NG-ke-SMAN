@@ -1158,17 +1158,17 @@ const SchoolRecommender = {
   
 /**
  * Get all recommendations grouped by category AND tier
- * Business rule: Jalur Prestasi requires NG >= 290
+ * Business rule: Jalur Prestasi requires NG >= 280
  */
 getAllRecommendations: function(userScore) {
   // Helper to check if japres is enabled
-  const isJapresEnabled = userScore >= 290;
+  const isJapresEnabled = userScore >= 280;
   
   return {
     SMAN_japres: {
       label: "🏆 SMAN Jalur Prestasi",
       disabled: !isJapresEnabled,  // ✅ NEW: disabled flag
-      minScore: 290,               // ✅ NEW: threshold info
+      minScore: 280,               // ✅ NEW: threshold info
       schools: isJapresEnabled ? this.findMatchingSchools(SCHOOL_DATA.SMAN_japres, userScore) : [],
       grouped: isJapresEnabled ? this.groupByTier(this.findMatchingSchools(SCHOOL_DATA.SMAN_japres, userScore)) : { target: [], safe: [], easy: [], risky: [] }
     },
@@ -1277,7 +1277,7 @@ if (grouped.target.length > 0) {
 renderCategory: function(categoryKey, data) {
   const { label, schools, grouped, disabled, minScore } = data;
   
-  // ✅ NEW: Handle disabled state (Jalur Prestasi < 290)
+  // ✅ NEW: Handle disabled state (Jalur Prestasi < 280)
  
   // Di dalam renderCategory(), bagian disabled:
 if (disabled) {
@@ -1404,7 +1404,7 @@ render: function(userScore) {
 	// ✅ NEW: Add header notice if japres is disabled
   const japresNotice = isJapresDisabled ? `
     <!-- div class="mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-      <!-- strong>⚠️ Jalur Prestasi terkunci</strong> — Butuh NG ≥ 290. --> 
+      <!-- strong>⚠️ Jalur Prestasi terkunci</strong> — Butuh NG ≥ 280. --> 
       <!-- Fokus pada Jalur Domisili terlebih dahulu. -->
     </div -->
   ` : '';
